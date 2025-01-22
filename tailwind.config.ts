@@ -9,6 +9,10 @@ export default {
   theme: {
     extend: {
       colors: {
+        offwhite: "#f8f8f8",
+        lightred: "#ff9999",
+        crimson: "#FF5733",
+        coalblack: "#171717",
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
