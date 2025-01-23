@@ -1,7 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import SearchBar from "@/components/form/searchbar";
 
 export default function Home() {
+
   return (
     <div className=" flex flex-col  font-[family-name:var(--font-geist-sans)] text-coalblack">
       {/* Header Section */}
@@ -46,8 +49,9 @@ export default function Home() {
             >
               Read the Docs
             </a>
+            
           </div>
-
+          <p className="text-base sm:text-lg mb-8 leading-relaxed">Put in your address to find the perfect places to eat </p>
           <SearchBar />
         </div>
       </main>
