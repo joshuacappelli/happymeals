@@ -1,8 +1,6 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { config } from "dotenv";
 
-config();
 
 export async function GET(request: NextRequest) {
     const apiKey = process.env.GEOCODING_API_KEY;

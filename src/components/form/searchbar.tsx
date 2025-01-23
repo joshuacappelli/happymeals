@@ -11,10 +11,7 @@ const SearchBar: React.FC = () => {
   const [localAddress, setLocalAddress] = useState("");
   const { setAddress } = useContext(SearchContext);
 
-  const handleSearch = async () => {
-    const coordinates = await getCoordinates(localAddress);
-    console.log(coordinates);
-    console.log(localAddress);
+  const handleSearch = () => {
     setAddress(localAddress);
   
     router.push(`/discover`);
@@ -48,14 +45,17 @@ const SearchBar: React.FC = () => {
   );
 };
 
+interface SearchBar2Props {
+  onsearch: (address: string) => void;
+}
 
-const SearchBar2: React.FC = () => {
-  const { address } = useContext(SearchContext);
+const SearchBar2: React.FC<SearchBar2Props> = ({ onsearch }) => {
+  const { address, setAddress } = useContext(SearchContext);
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearch = () => {
-    // Implement search functionality here
-    console.log("Searching for:", searchTerm);
+    setAddress(searchTerm);
+    onsearch(searchTerm);
   };
 
   return (
@@ -63,7 +63,7 @@ const SearchBar2: React.FC = () => {
       <input
         type="text"
         placeholder={` ${address}`}
-        className="border border-gray-300 p-3 w-80 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+        className="border border-gray-300 p-3 w-80 shadow-md focus:outline-none focus:ring-2 focus:ring-crimson transition duration-300"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         onKeyDown={(e) => {
