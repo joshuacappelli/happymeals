@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import SearchBar from "@/components/form/searchbar";
+import {SearchBar } from "@/components/form/searchbar";
 
 export default function Home() {
 
