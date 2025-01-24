@@ -1,45 +1,81 @@
-"use client"; // needed if you're in Next.js 13+ App Router with a client component
+"use client"; 
 
 import React, { useContext, useState } from "react";
+import Select from "react-select";
 import { SearchContext } from "@/app/context/searchcontext";
-import { useRouter } from "next/navigation";
+import { MultiValue, restaurantTypes, preferenceOptions } from "@/app/lib/searchtypes";
 
 interface PlacesSelectionPanelProps {
-    onsearch: (address: string, maxresults: number, radius: number, primarytypes: string[], preference: string) => void;
+  onSearch: (
+    maxResults: number, 
+    radius: number, 
+    primaryTypes: string[], 
+    preference: string
+  ) => void;
 }
 
-const PlacesSelectionPanel: React.FC<PlacesSelectionPanelProps> = ({ onsearch }) => {
+/**
+ * A panel that lets the user choose:
+ *  1) Address/keyword (text input),
+ *  2) Multiple restaurant types (multi-select),
+ *  3) Distance (number input),
+ *  4) Rank preference (select).
+ *
+ * When "Search" is clicked, calls onSearch(...) with all the selected values.
+ */
+const PlacesSelectionPanel: React.FC<PlacesSelectionPanelProps> = ({ onSearch }) => {
+  // If you want to store the address in context, you can use it here:
   const { address, setAddress } = useContext(SearchContext);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [restaurantType, setRestaurantType] = useState("restaurant");
-  const [distance, setDistance] = useState(500);
-  const [preference, setPreference] = useState("BEST"); // Must be valid v1 value: BEST, DISTANCE, ...
-  const [keyword, setKeyword] = useState("");
 
+  // setting how many results to return
+  const [maxResults, setMaxResults] = useState<number>(10);
+  
+  // For multi-select restaurant types
+  const [restaurantType, setRestaurantType] = useState<MultiValue[]>([]);
+
+  // For distance (default 500m)
+  const [distance, setDistance] = useState<number>(500);
+
+  // For preference (MUST be a valid v1 value, like "BEST", "DISTANCE", or "RANK_PREFERENCE_UNSPECIFIED")
+  const [preference, setPreference] = useState<string>("BEST");
+
+  // “Search” button handler
   const handleSearch = () => {
-    setAddress(searchTerm);
-    onsearch(address, 10, 500, ["restaurant"], "BEST");
-  }
- 
+    // Convert the MultiValue[] to a string[] of the .value
+    const primaryTypes = restaurantType.map((item) => item.value);
+
+    // Send these up to the parent
+    onSearch(maxResults, distance, primaryTypes, preference);
+  };
+
   return (
     <div style={{ padding: "1rem", border: "1px solid #ccc" }}>
       <h2>Find Places</h2>
+
+      {/* 1. Address / Keyword input */}
       <div style={{ marginBottom: "1rem" }}>
-        {/* 1. Choose Type of Restaurant */}
-        <label style={{ marginRight: "0.5rem" }}>Type:</label>
-        <select
-          value={restaurantType}
-          onChange={(e) => setRestaurantType(e.target.value)}
-        >
-          <option value="restaurant">Restaurant</option>
-          <option value="cafe">Cafe</option>
-          <option value="bar">Bar</option>
-          {/* Add more as needed */}
-        </select>
+        <label style={{ marginRight: "0.5rem" }}>Address / Keyword:</label>
+        <input
+          type="text"
+          placeholder="e.g. 123 Main St or 'Seafood'"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+        />
       </div>
 
+      {/* 2. Restaurant Types (multi-select) */}
       <div style={{ marginBottom: "1rem" }}>
-        {/* 2. Choose Distance */}
+        <label>Restaurant Types (Multi-select):</label>
+        <Select
+          options={restaurantTypes}
+          isMulti
+          value={restaurantType}
+          onChange={(vals) => setRestaurantType(vals as MultiValue[])}
+        />
+      </div>
+
+      {/* 3. Distance (number input) */}
+      <div style={{ marginBottom: "1rem" }}>
         <label style={{ marginRight: "0.5rem" }}>Distance (meters):</label>
         <input
           type="number"
@@ -50,34 +86,25 @@ const PlacesSelectionPanel: React.FC<PlacesSelectionPanelProps> = ({ onsearch })
         />
       </div>
 
+      {/* 4. Rank Preference (single select) */}
       <div style={{ marginBottom: "1rem" }}>
-        {/* 3. Choose rankPreference */}
         <label style={{ marginRight: "0.5rem" }}>Preference:</label>
         <select
           value={preference}
           onChange={(e) => setPreference(e.target.value)}
         >
-          <option value="BEST">Best</option>
-          <option value="DISTANCE">Distance</option>
-          <option value="RANK_PREFERENCE_UNSPECIFIED">Unspecified</option>
-          {/* As allowed by the Google Places v1 docs */}
+          {preferenceOptions.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
         </select>
       </div>
 
-      <div style={{ marginBottom: "1rem" }}>
-        {/* 4. Optional text input (keyword) */}
-        <label style={{ marginRight: "0.5rem" }}>Keyword / Place name:</label>
-        <input
-          type="text"
-          placeholder="e.g., Seafood"
-          value={keyword}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
-
+      {/* 5. "Search" button */}
       <button onClick={handleSearch}>Search</button>
     </div>
   );
-}
+};
 
 export default PlacesSelectionPanel;

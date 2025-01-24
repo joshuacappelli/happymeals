@@ -65,7 +65,7 @@ const DiscoverPage = () => {
     return (
         <div className="flex flex-col items-center p-4">
             <h1 className="text-3xl font-bold mb-4">Discover</h1>
-            <SearchPanel onsearch={handleSearch} />
+            <SearchPanel onSearch={handleFetchPlaces} />
             <p className="mt-4 text-lg font-semibold">Top results for: {address}</p>
             <p className="text-md">Coordinates: {coordinates?.lat}, {coordinates?.lng}</p>
             <div className="content mt-6">
