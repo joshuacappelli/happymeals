@@ -5,11 +5,12 @@ import { SearchBar2 } from '@/components/form/searchbar';
 import { SearchContext } from '@/app/context/searchcontext';
 import { useContext, useEffect, useState } from 'react';
 import getCoordinates from '../lib/geocoding';
+import { fetchPlaces, PlacesRequestBody } from '../lib/fetchplaces';
 
 const DiscoverPage = () => {
 
     const { address, setAddress } = useContext(SearchContext);
-    const [coordinates, setCoordinates] = useState<{ lat: number, lng: number } | null>(null);
+    const [coordinates, setCoordinates] = useState<{ lat: number, lng: number }>({ lat: 0, lng: 0 });
 
     const handleSearch = async (address: string) => {
 
@@ -28,6 +29,36 @@ const DiscoverPage = () => {
     useEffect(() => {
         handleSearch(address);
     }, []);
+
+    useEffect(() => {
+        handleFetchPlaces(10, 1000, ["restaurant"], "PROMINENCE");
+    }, [coordinates]);
+
+    const handleFetchPlaces = async (maxresults : number, radius : number, primarytypes : string[], preference : string) => {
+        
+        if (coordinates.lat === 0 && coordinates.lng === 0) {
+            return;
+        }
+        
+        const body: PlacesRequestBody = {
+            includedTypes: ["restaurant"],
+            maxResultCount: maxresults,
+            locationRestriction: {
+                circle: {
+                    center: {
+                        latitude: coordinates.lat,
+                        longitude: coordinates.lng
+                    },
+                    radius: radius
+                }
+            },
+            rankPreference: preference,
+            includedPrimaryTypes: primarytypes,
+        };
+
+        const places = await fetchPlaces(body);
+        console.log(places);
+    };
     
     return (
         <div className="flex flex-col items-center p-4">
