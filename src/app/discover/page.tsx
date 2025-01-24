@@ -1,8 +1,8 @@
 "use client";
 
 import React from 'react';
-import { SearchBar2 } from '@/components/form/searchbar';
 import { SearchContext } from '@/app/context/searchcontext';
+import SearchPanel from '@/components/ui/searchpanel';
 import { useContext, useEffect, useState } from 'react';
 import getCoordinates from '../lib/geocoding';
 import { fetchPlaces, PlacesRequestBody } from '../lib/fetchplaces';
@@ -31,7 +31,7 @@ const DiscoverPage = () => {
     }, []);
 
     useEffect(() => {
-        handleFetchPlaces(10, 1000, ["restaurant"], "PROMINENCE");
+        handleFetchPlaces(10, 1000, ["restaurant"], "DISTANCE");
     }, [coordinates]);
 
     const handleFetchPlaces = async (maxresults : number, radius : number, primarytypes : string[], preference : string) => {
@@ -56,6 +56,8 @@ const DiscoverPage = () => {
             includedPrimaryTypes: primarytypes,
         };
 
+        console.log("body is", body);
+
         const places = await fetchPlaces(body);
         console.log(places);
     };
@@ -63,7 +65,7 @@ const DiscoverPage = () => {
     return (
         <div className="flex flex-col items-center p-4">
             <h1 className="text-3xl font-bold mb-4">Discover</h1>
-            <SearchBar2 onsearch={handleSearch} />
+            <SearchPanel onsearch={handleSearch} />
             <p className="mt-4 text-lg font-semibold">Top results for: {address}</p>
             <p className="text-md">Coordinates: {coordinates?.lat}, {coordinates?.lng}</p>
             <div className="content mt-6">

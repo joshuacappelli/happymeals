@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useContext, useState } from "react";
-import getCoordinates from "@/app/lib/geocoding";
 import { SearchContext } from "@/app/context/searchcontext";
 import { useRouter } from "next/navigation";
 

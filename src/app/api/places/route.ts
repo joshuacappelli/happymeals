@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
-  const apiKey = process.env.PLACES_API_KEY;
+  const apiKey = process.env.GEOCODING_API_KEY;
     
   if (!apiKey) {
     return NextResponse.json({ error: "API key is not set" }, { status: 500 });
@@ -20,7 +20,6 @@ export async function POST(request: NextRequest) {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
-        // Could also do "X-Goog-Api-Key": apiKey, if the docs say so.
       },
       body: JSON.stringify(body)
     });
