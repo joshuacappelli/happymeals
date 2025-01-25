@@ -12,7 +12,7 @@ const DiscoverPage = () => {
     const { address, setAddress } = useContext(SearchContext);
     const [coordinates, setCoordinates] = useState<{ lat: number, lng: number }>({ lat: 0, lng: 0 });
 
-    const handleSearch = async (address: string) => {
+    const handleSearch = async (address: string) => {        
 
         if (address === "" || address === null) {
             return;
@@ -36,6 +36,15 @@ const DiscoverPage = () => {
 
     const handleFetchPlaces = async (maxresults : number, radius : number, primarytypes : string[], preference : string) => {
         
+        handleSearch(address);
+
+        console.log("coordinates", coordinates);
+        console.log("address", address);
+        console.log("maxresults", maxresults);
+        console.log("radius", radius);
+        console.log("primarytypes", primarytypes);
+        console.log("preference", preference);
+
         if (coordinates.lat === 0 && coordinates.lng === 0) {
             return;
         }

@@ -25,7 +25,9 @@ interface PlacesSelectionPanelProps {
  */
 const PlacesSelectionPanel: React.FC<PlacesSelectionPanelProps> = ({ onSearch }) => {
   // If you want to store the address in context, you can use it here:
-  const { address, setAddress } = useContext(SearchContext);
+  const { setAddress } = useContext(SearchContext);
+
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   // setting how many results to return
   const [maxResults, setMaxResults] = useState<number>(10);
@@ -39,70 +41,100 @@ const PlacesSelectionPanel: React.FC<PlacesSelectionPanelProps> = ({ onSearch })
   // For preference (MUST be a valid v1 value, like "BEST", "DISTANCE", or "RANK_PREFERENCE_UNSPECIFIED")
   const [preference, setPreference] = useState<string>("BEST");
 
-  // “Search” button handler
+  // "Search" button handler
   const handleSearch = () => {
     // Convert the MultiValue[] to a string[] of the .value
+    console.log("restaurantType before mapping", restaurantType);
+    restaurantType.forEach(item => console.log(item.value));
     const primaryTypes = restaurantType.map((item) => item.value);
+    setAddress(searchTerm);
 
     // Send these up to the parent
     onSearch(maxResults, distance, primaryTypes, preference);
   };
 
   return (
-    <div style={{ padding: "1rem", border: "1px solid #ccc" }}>
-      <h2>Find Places</h2>
+    <div className="flex flex-col items-center w-full justify-center pt-4">
 
-      {/* 1. Address / Keyword input */}
-      <div style={{ marginBottom: "1rem" }}>
-        <label style={{ marginRight: "0.5rem" }}>Address / Keyword:</label>
-        <input
-          type="text"
-          placeholder="e.g. 123 Main St or 'Seafood'"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-        />
+      {/* Row for Address / Keyword input and Restaurant Types */}
+      <div className="flex flex-row justify-center items-center mb-4">
+        {/* 1. Address / Keyword input */}
+        <div className="mr-4">
+          <input
+            type="text"
+            placeholder="e.g. 123 Main St or 'Seafood'"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSearch();
+              }
+            }}
+          />
+        </div>
+
+        {/* 2. Restaurant Types (multi-select) */}
+        <div style={{ marginBottom: "1rem" }}>
+          <Select
+            options={restaurantTypes}
+            isMulti
+            value={restaurantType}
+            onChange={(vals) => setRestaurantType(vals as MultiValue[])}
+          />
+        </div>
+
+        <button 
+        onClick={handleSearch}
+        className="ml-2 bg-crimson text-white p-3 hover:bg-crimson/80 transition duration-300 focus:ring-2 focus:ring-crimson-300">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </button>
+
       </div>
 
-      {/* 2. Restaurant Types (multi-select) */}
-      <div style={{ marginBottom: "1rem" }}>
-        <label>Restaurant Types (Multi-select):</label>
-        <Select
-          options={restaurantTypes}
-          isMulti
-          value={restaurantType}
-          onChange={(vals) => setRestaurantType(vals as MultiValue[])}
-        />
+      {/* Row for Distance, Max Results, and Preference */}
+      <div className="flex flex-row mb-4">
+        {/* 3. Distance (number input) */}
+        <div className="rounded border p-2 mr-4 bg-white">
+          <input
+            type="number"
+            value={distance}
+            onChange={(e) => setDistance(Number(e.target.value))}
+            min={1}
+            step={100}
+            style={{ appearance: 'none', MozAppearance: 'textfield' }}
+          />
+        </div>
+
+        {/* Max Results */}
+        <div className="rounded border p-2 mr-4 bg-white">
+          <label className="mr-2">Max Results:</label>
+          <input
+            type="number"
+            value={maxResults}
+            onChange={(e) => setMaxResults(Number(e.target.value))}
+            style={{ appearance: 'none', MozAppearance: 'textfield' }}
+          />
+        </div>
+
+        {/* 4. Rank Preference (single select) */}
+        <div className="rounded border p-2 bg-white">
+          <label className="mr-2">Preference:</label>
+          <select
+            value={preference}
+            onChange={(e) => setPreference(e.target.value)}
+            style={{ appearance: 'none' }}
+          >
+            {preferenceOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
-      {/* 3. Distance (number input) */}
-      <div style={{ marginBottom: "1rem" }}>
-        <label style={{ marginRight: "0.5rem" }}>Distance (meters):</label>
-        <input
-          type="number"
-          value={distance}
-          onChange={(e) => setDistance(Number(e.target.value))}
-          min={1}
-          step={100}
-        />
-      </div>
-
-      {/* 4. Rank Preference (single select) */}
-      <div style={{ marginBottom: "1rem" }}>
-        <label style={{ marginRight: "0.5rem" }}>Preference:</label>
-        <select
-          value={preference}
-          onChange={(e) => setPreference(e.target.value)}
-        >
-          {preferenceOptions.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* 5. "Search" button */}
-      <button onClick={handleSearch}>Search</button>
     </div>
   );
 };
