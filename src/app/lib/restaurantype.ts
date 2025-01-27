@@ -11,5 +11,5 @@ export type RestaurantType = {
     hours: string | undefined;
     phoneNumber: string | undefined;
     website: string | undefined;
-    photos: string[] | undefined;
+    photos: any[] | undefined;
 }

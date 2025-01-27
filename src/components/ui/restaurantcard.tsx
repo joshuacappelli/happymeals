@@ -49,14 +49,15 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
   
     // Limit the list of types to 3
     const displayTypes = types.slice(0, 3);
-  
+    console.log(photos);
+    console.log("first photo googleMapsUri", photos[0].googleMapsUri);
     return (
       <div className="max-w-sm bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
         {/* Featured Image */}
         {photos.length > 0 && (
           <div className="relative w-full h-48">
             <img
-              src={photos[0]}
+              src={photos[0].googleMapsUri}
               alt={displayName || "Restaurant"}
               className="absolute inset-0 w-full h-full object-cover"
             />

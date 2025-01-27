@@ -8,6 +8,7 @@ import { fetchPlaces, PlacesRequestBody } from '../lib/fetchplaces';
 import RestaurantCard from '@/components/ui/restaurantcard';
 import { RestaurantType } from '../lib/restaurantype';
 import RestaurantCarousel from '@/components/ui/restaurantcarousel';
+import Link from 'next/link';
 
 const DiscoverPage = () => {
   const { address } = useContext(SearchContext);
@@ -98,15 +99,20 @@ const DiscoverPage = () => {
 
   return (
     <div className="flex flex-col items-center p-4">
+      <Link href="/" className="absolute top-4 left-4 hover:text-crimson transition-colors duration-300">Back to Home</Link>
       <h1 className="text-3xl font-bold mb-4">Discover</h1>
+      
       <PlacesSelectionPanel onSearch={handleSearchParams} />
-      <div className="content mt-6">
-        <RestaurantCarousel restaurants={places} />
-      </div>
 
       <div className="content mt-6">
         <span className="text-lg font-semibold">Results for {formattedAddress}</span>
       </div>
+
+      <div className="content mt-6 w-full overflow-x-hidden">
+        <RestaurantCarousel restaurants={places} />
+      </div>
+
+      
     </div>
   );
 };
