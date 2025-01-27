@@ -1,6 +1,6 @@
 "use client"; 
 
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import Select from "react-select";
 import { SearchContext } from "@/app/context/searchcontext";
 import { MultiValue, restaurantTypes, preferenceOptions } from "@/app/lib/searchtypes";
@@ -25,7 +25,7 @@ interface PlacesSelectionPanelProps {
  */
 const PlacesSelectionPanel: React.FC<PlacesSelectionPanelProps> = ({ onSearch }) => {
   // If you want to store the address in context, you can use it here:
-  const { setAddress } = useContext(SearchContext);
+  const { address, setAddress } = useContext(SearchContext);
 
   const [searchTerm, setSearchTerm] = useState<string>("");
 
@@ -41,14 +41,18 @@ const PlacesSelectionPanel: React.FC<PlacesSelectionPanelProps> = ({ onSearch })
   // For preference (MUST be a valid v1 value, like "BEST", "DISTANCE", or "RANK_PREFERENCE_UNSPECIFIED")
   const [preference, setPreference] = useState<string>("BEST");
 
+  // Log address whenever it changes
+  useEffect(() => {
+    console.log("address set to", address);
+  }, [address]);
+
   // "Search" button handler
-  const handleSearch = () => {
+  const handleSearch =  () => {
     // Convert the MultiValue[] to a string[] of the .value
-    console.log("restaurantType before mapping", restaurantType);
-    restaurantType.forEach(item => console.log(item.value));
     const primaryTypes = restaurantType.map((item) => item.value);
     setAddress(searchTerm);
 
+    console.log("searchTerm", searchTerm);
     // Send these up to the parent
     onSearch(maxResults, distance, primaryTypes, preference);
   };
