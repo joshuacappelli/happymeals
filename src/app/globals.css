@@ -19,3 +19,33 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.react-select-container .react-select__control {
+  border: 1px solid #d1d5db; /* gray-300 */
+  border-radius: 0.5rem; /* rounded-lg */
+  padding: 0.5rem; /* p-2 */
+  min-height: 3rem; /* Match input height */
+}
+
+.react-select-container .react-select__control--is-focused {
+  border-color: transparent;
+  box-shadow: 0 0 0 2px #ef4444; /* focus:ring-2 focus:ring-crimson-500 */
+}
+
+.react-select-container .react-select__multi-value {
+  background-color: #f3f4f6; /* gray-100 */
+  border-radius: 0.375rem; /* rounded-md */
+}
+
+.react-select-container .react-select__multi-value__label {
+  color: #111827; /* gray-900 */
+}
+
+.react-select-container .react-select__multi-value__remove {
+  color: #6b7280; /* gray-500 */
+}
+
+.react-select-container .react-select__menu {
+  border-radius: 0.5rem; /* rounded-lg */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+}
