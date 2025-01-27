@@ -5,6 +5,9 @@ import { SearchContext } from '@/app/context/searchcontext';
 import PlacesSelectionPanel from '@/components/ui/searchpanel';
 import getCoordinates from '../lib/geocoding';
 import { fetchPlaces, PlacesRequestBody } from '../lib/fetchplaces';
+import RestaurantCard from '@/components/ui/restaurantcard';
+import { RestaurantType } from '../lib/restaurantype';
+import RestaurantCarousel from '@/components/ui/restaurantcarousel';
 
 const DiscoverPage = () => {
   const { address } = useContext(SearchContext);
@@ -18,6 +21,7 @@ const DiscoverPage = () => {
   const [preference, setPreference] = useState<string>("POPULARITY");
   const [time, setTime] = useState<string>("");
   const [guests, setGuests] = useState<number>(1);
+  const [places, setPlaces] = useState<RestaurantType[]>([]);
 
 
   const handleSearchParams = (
@@ -73,6 +77,7 @@ const DiscoverPage = () => {
 
     try {
       const places = await fetchPlaces(body);
+      setPlaces(places);
       console.log("Fetched places:", places);
     } catch (error) {
       console.error("Error fetching places:", error);
@@ -96,7 +101,7 @@ const DiscoverPage = () => {
       <h1 className="text-3xl font-bold mb-4">Discover</h1>
       <PlacesSelectionPanel onSearch={handleSearchParams} />
       <div className="content mt-6">
-        {/* Render fetched places here */}
+        <RestaurantCarousel restaurants={places} />
       </div>
 
       <div className="content mt-6">
