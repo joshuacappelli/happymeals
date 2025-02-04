@@ -5,7 +5,6 @@ import { SearchContext } from '@/app/context/searchcontext';
 import PlacesSelectionPanel from '@/components/ui/searchpanel';
 import getCoordinates from '../lib/geocoding';
 import { fetchPlaces, PlacesRequestBody } from '../lib/fetchplaces';
-import RestaurantCard from '@/components/ui/restaurantcard';
 import { RestaurantType } from '../lib/restaurantype';
 import RestaurantCarousel from '@/components/ui/restaurantcarousel';
 import Link from 'next/link';
