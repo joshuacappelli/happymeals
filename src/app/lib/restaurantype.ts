@@ -1,4 +1,9 @@
 
+interface photo {
+    googleMapsUri?: string;
+}
+
+
 export type RestaurantType = {
     displayName: string | undefined;
     primaryType: string | undefined;
@@ -11,5 +16,5 @@ export type RestaurantType = {
     hours: string | undefined;
     phoneNumber: string | undefined;
     website: string | undefined;
-    photos: any[] | undefined;
+    photos: photo[] | undefined;
 }

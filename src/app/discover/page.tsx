@@ -40,6 +40,7 @@ const DiscoverPage = () => {
     setGuests(guests);
 
     console.log("results from searchpanel");
+    
     console.log(maxResults, distance, restaurantType, preference, time, guests);
   };
 
@@ -56,34 +57,77 @@ const DiscoverPage = () => {
     }
   };
 
+  // const handleFetchPlaces = async () => {
+  //   if (coordinates.lat === 0 && coordinates.lng === 0) return;
+
+  //   console.log("time:", time);
+  //   console.log("guests:", guests);
+
+  //   const body: PlacesRequestBody = {
+  //     includedTypes: ["restaurant"],
+  //     maxResultCount: maxResults,
+  //     locationRestriction: {
+  //       circle: {
+  //         center: {
+  //           latitude: coordinates.lat,
+  //           longitude: coordinates.lng,
+  //         },
+  //         radius: distance,
+  //       },
+  //     },
+  //     rankPreference: preference,
+  //     includedPrimaryTypes: restaurantType,
+  //   };
+
+  //   try {
+  //     const places = await fetchPlaces(body);
+  //     setPlaces(places);
+  //     console.log("Fetched places:", places);
+  //   } catch (error) {
+  //     console.error("Error fetching places:", error);
+  //   }
+  // };
+
   const handleFetchPlaces = async () => {
-    if (coordinates.lat === 0 && coordinates.lng === 0) return;
+    if (coordinates.lat === 0 || coordinates.lng === 0) {
+        console.error("Invalid coordinates. API call skipped.");
+        return;
+    }
+
+    console.log("Fetching places...");
+    console.log("Time:", time);
+    console.log("Guests:", guests);
+    console.log("Coordinates:", coordinates);
+    console.log("Distance:", distance);
+    console.log("Preference:", preference);
+    console.log("Restaurant Type:", restaurantType);
 
     const body: PlacesRequestBody = {
-      includedTypes: ["restaurant"],
-      maxResultCount: maxResults,
-      locationRestriction: {
-        circle: {
-          center: {
-            latitude: coordinates.lat,
-            longitude: coordinates.lng,
-          },
-          radius: distance,
+        includedTypes: ["restaurant"],
+        maxResultCount: maxResults,
+        locationRestriction: {
+            circle: {
+                center: {
+                    latitude: coordinates.lat,
+                    longitude: coordinates.lng,
+                },
+                radius: distance,
+            },
         },
-      },
-      rankPreference: preference,
-      includedPrimaryTypes: restaurantType,
+        rankPreference: preference,
+        includedPrimaryTypes: restaurantType,
     };
 
     try {
-      const places = await fetchPlaces(body);
-      setPlaces(places);
-      console.log("Fetched places:", places);
+        const places = await fetchPlaces(body);
+        setPlaces(places);
+        console.log("Successfully fetched places:", places);
     } catch (error) {
-      console.error("Error fetching places:", error);
+        console.error("Error fetching places:", error);
     }
-  };
+};
 
+  
   useEffect(() => {
     if (address) {
       handleSearch();

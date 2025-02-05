@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-
   "scripts": {
     "dev": "next dev --turbopack",
-    "customdev": "node server.js",
+    "custombuild": "next build && tsc",
+    "customdev": "npx tsx server.ts",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "customstart": "NODE_ENV=production node server.js"
   },
   "dependencies": {
     "@fastify/cors": "^10.0.2",
@@ -28,6 +29,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@types/express": "^5.0.0",
     "@types/node": "^20.17.17",
     "@types/react": "^19",
     "@types/react-dom": "^19",
