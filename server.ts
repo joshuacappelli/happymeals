@@ -19,7 +19,7 @@ const handle = app.getRequestHandler();
 
 // No-Op Parser (Prevents Next.js and Fastify from conflicting)
 async function noOpParser(_req: FastifyRequest, payload: IncomingMessage) {
-  return payload; // Fastify will NOT parse the body
+  return payload; 
 }
 
 async function startServer() {
