@@ -2,6 +2,8 @@ import fastify from "fastify";
 import fastifyCors from "@fastify/cors";
 import next from "next";
 import dotenv from "dotenv";
+import { IncomingMessage } from "http"; // Required for No-Op parser
+import { FastifyRequest } from "fastify"; // Required for No-Op parser
 
 dotenv.config();
 
@@ -15,31 +17,35 @@ const server = fastify({ logger: true });
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
+// No-Op Parser (Prevents Next.js and Fastify from conflicting)
+async function noOpParser(_req: FastifyRequest, payload: IncomingMessage) {
+  return payload; // Fastify will NOT parse the body
+}
+
 async function startServer() {
   try {
     // Prepare Next.js
     await app.prepare();
 
-    //  Register CORS **BEFORE** all routes to prevent conflicts
+    // Register No-Op Body Parser
+    server.addContentTypeParser("application/json", noOpParser);
+    server.addContentTypeParser("text/plain", noOpParser);
+
+    // Register CORS if needed
     // await server.register(fastifyCors, {
     //   origin: "*",
-    //   methods: ["GET", "POST", "PUT", "DELETE"], // OPTIONS is implicitly added
+    //   methods: ["GET", "POST", "PUT", "DELETE"],
     // });
 
-    //  Use "*" instead of "/*" to prevent Fastify from overriding OPTIONS
+    // Handle all requests using Next.js
     server.all("*", async (req, res) => {
-        console.log(`Handling request for: ${req.url}`);
-        console.log("Before handling Next.js request...");
-      
-        // ✅ Do NOT modify the response manually after `handle()`
-        await handle(req.raw, res.raw);
-      
-        console.log("After handling Next.js request...");
+      console.log(`Handling request for: ${req.url}`);
+      console.log("Before handling Next.js request...");
+
+      await handle(req.raw, res.raw);
+
+      console.log("After handling Next.js request...");
     });
-      
-      
-      
-      
 
     // Start Fastify server
     server.listen({ port: PORT }, (err, address) => {
@@ -56,4 +62,3 @@ async function startServer() {
 }
 
 startServer();
-
