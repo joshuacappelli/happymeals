@@ -33,10 +33,6 @@ const {
   OPENAI_API_KEY,
 } = process.env;
 
-console.log(TWILIO_ACCOUNT_SID);
-console.log(TWILIO_AUTH_TOKEN);
-console.log(rawDomain);
-console.log(OPENAI_API_KEY);
 
 if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !PHONE_NUMBER_FROM || !rawDomain || !OPENAI_API_KEY) {
   console.error("Missing required environment variables.");
@@ -148,30 +144,33 @@ async function startServer() {
     });
 
     // Handle Twilio Call Request
-    server.post("/call", async (request, reply) => {
-      const { to } = request.body as { to: string };
-      if (!to) {
-        return reply.status(400).send({ error: "Missing 'to' phone number" });
-      }
+    // server.post("/call", async (request, reply) => {
+    //   const { to } = request.body as { to: string };
+    //   console.log("request body is: ", request.body);
+    //   if (!to) {
+    //     return reply.status(400).send({ error: "Missing 'to' phone number" });
+    //   }
 
-      const isAllowed = await isNumberAllowed(to);
-      if (!isAllowed) {
-        return reply.status(403).send({ error: `Number ${to} is not allowed.` });
-      }
+    //   const isAllowed = await isNumberAllowed(to);
+    //   if (!isAllowed) {
+    //     return reply.status(403).send({ error: `Number ${to} is not allowed.` });
+    //   }
 
-      try {
-        const call = await client.calls.create({
-          from: PHONE_NUMBER_FROM!,
-          to,
-          twiml: outboundTwiML,
-        });
-        console.log(`Call started with SID: ${call.sid}`);
-        return reply.send({ success: true, sid: call.sid });
-      } catch (error) {
-        console.error("Error making call:", error);
-        return reply.status(500).send({ error: "Failed to initiate call" });
-      }
-    });
+    //   try {
+    //     const call = await client.calls.create({
+    //       from: PHONE_NUMBER_FROM!,
+    //       to,
+    //       twiml: outboundTwiML,
+    //     });
+    //     console.log(`Call started with SID: ${call.sid}`);
+    //     return reply.send({ success: true, sid: call.sid });
+    //   } catch (error) {
+    //     console.error("Error making call:", error);
+    //     return reply.status(500).send({ error: "Failed to initiate call" });
+    //   }
+    // });
+
+
 
     // Start Fastify Server
     server.listen({ port: PORT }, (err, address) => {
