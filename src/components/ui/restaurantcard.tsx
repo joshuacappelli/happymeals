@@ -1,9 +1,12 @@
 import { RestaurantType } from "@/app/lib/restaurantype";
 import  CallButton  from "@/components/ui/callbutton";
+import getPhotos from "@/app/lib/fetchphoto";
+import { useState, useEffect } from "react";
 
 interface RestaurantCardProps {
     restaurant: RestaurantType;
 }
+
 
 export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
     const {
@@ -19,6 +22,19 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
       website,
       photos = [],
     } = restaurant;
+
+    const [photo, setPhoto] = useState("");
+
+    async function renderPhoto() {
+      const image = await getPhotos(photos[0].name);
+      setPhoto(image.photoUri);
+      console.log(photo);
+    }
+
+    useEffect(() => {
+      renderPhoto();
+    }, []);
+    
   
     // Helper to render star rating (up to 5 stars). Adjust logic or limit to your needs.
     const renderStars = () => {
@@ -51,6 +67,9 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
     // Limit the list of types to 3
     const displayTypes = types.slice(0, 3);
     console.log(photos);
+
+    
+
     console.log("first photo googleMapsUri", photos[0].googleMapsUri);
     return (
       <div className="max-w-sm bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
@@ -58,7 +77,7 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
         {photos.length > 0 && (
           <div className="relative w-full h-48">
             <img
-              src={photos[0].googleMapsUri}
+              src={photo}
               alt={displayName || "Restaurant"}
               className="absolute inset-0 w-full h-full object-cover"
             />

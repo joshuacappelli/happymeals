@@ -1,6 +1,7 @@
 
 interface photo {
     googleMapsUri?: string;
+    name: string;
 }
 
 

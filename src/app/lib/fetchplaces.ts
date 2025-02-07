@@ -24,6 +24,7 @@ interface OpeningHours {
 
 interface photo {
     googleMapsUri?: string;
+    name: string;
 }
 
 interface PlaceApiResponse {
