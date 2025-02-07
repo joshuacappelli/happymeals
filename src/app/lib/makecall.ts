@@ -1,5 +1,6 @@
 export async function makeCall(phoneNumber: string) {
     try {
+      console.log("phone number sent to makeCall function: ", phoneNumber);
       const response = await fetch("/call", {
         method: "POST",
         headers: {

@@ -1,4 +1,5 @@
 import { RestaurantType } from "@/app/lib/restaurantype";
+import  CallButton  from "@/components/ui/callbutton";
 
 interface RestaurantCardProps {
     restaurant: RestaurantType;
@@ -150,6 +151,8 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
           >
             View on Maps
           </button>
+
+          <CallButton phoneNumber={"+19419283484"} />
         </div>
       </div>
     );

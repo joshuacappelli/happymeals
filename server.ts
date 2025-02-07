@@ -8,6 +8,7 @@ import { WebSocket } from "ws";
 import { IncomingMessage } from "http";
 import { FastifyRequest, FastifyInstance } from "fastify";
 import twilio from "twilio";
+import { raw } from "express";
 
 dotenv.config();
 
@@ -31,6 +32,11 @@ const {
   DOMAIN: rawDomain,
   OPENAI_API_KEY,
 } = process.env;
+
+console.log(TWILIO_ACCOUNT_SID);
+console.log(TWILIO_AUTH_TOKEN);
+console.log(rawDomain);
+console.log(OPENAI_API_KEY);
 
 if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !PHONE_NUMBER_FROM || !rawDomain || !OPENAI_API_KEY) {
   console.error("Missing required environment variables.");
@@ -181,7 +187,7 @@ async function startServer() {
   }
 }
 
-// ✅ Helper Function to Check Allowed Numbers
+// Helper Function to Check Allowed Numbers
 async function isNumberAllowed(to: string) {
   try {
     const incomingNumbers = await client.incomingPhoneNumbers.list({ phoneNumber: to });
@@ -197,5 +203,5 @@ async function isNumberAllowed(to: string) {
   }
 }
 
-// ✅ Start Server
+// Start Server
 startServer();
