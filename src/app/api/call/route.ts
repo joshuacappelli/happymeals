@@ -36,11 +36,11 @@ const {
   TWILIO_ACCOUNT_SID,
   TWILIO_AUTH_TOKEN,
   PHONE_NUMBER_FROM,
-  DOMAIN,
+  DOMAIN: rawDomain,
 } = process.env;
 
 // Check if required env variables exist
-if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !PHONE_NUMBER_FROM || !DOMAIN) {
+if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !PHONE_NUMBER_FROM || !rawDomain) {
   throw new Error("Missing required Twilio environment variables");
 }
 
@@ -48,10 +48,12 @@ if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !PHONE_NUMBER_FROM || !DOMAIN) 
 const client = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
 
 // TwiML Response (Tells Twilio to use WebSocket)
+const DOMAIN = rawDomain.replace(/(^\w+:|^)\/\//, '').replace(/\/+$/, ''); // Clean protocols and slashes
+
 const outboundTwiML = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
   <Connect>
-    <Stream url="wss://${DOMAIN}/media-stream" /> <!-- Twilio will connect here -->
+    <Stream url="wss://${DOMAIN}/media-stream" />
   </Connect>
 </Response>`;
 

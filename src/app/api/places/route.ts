@@ -14,7 +14,6 @@ export async function POST(request: NextRequest) {
     console.log("Received Request Body:", body);
 
     const url = `https://places.googleapis.com/v1/places:searchNearby?fields=*&key=${apiKey}`;
-    console.log("Fetching from Google API:", url);
 
     const response = await fetch(url, {
       method: "POST",
@@ -24,7 +23,6 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify(body)
     });
 
-    console.log("Google API Response Status:", response.status);
 
     if (!response.ok) {
       const errorResponse = await response.json();
@@ -33,7 +31,6 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await response.json();
-    console.log("Google API JSON Response:", data);
 
     return NextResponse.json(data);
 

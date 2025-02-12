@@ -65,7 +65,7 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
     };
   
     // Limit the list of types to 3
-    const displayTypes = types.slice(0, 3);
+    const displayTypes = types.slice(0, 4);
     console.log(photos);
 
     
@@ -157,13 +157,12 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
               href={website}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-blue-500 underline mb-2 inline-block"
+              className="text-sm underline mb-2 inline-block"
             >
               Visit Website
             </a>
           )}
   
-          {/* Button - You can adapt link to Google Maps or any mapping service */}
           <button
             onClick={() => alert(`Navigate to map for: ${displayName}`)}
             className="w-full mt-4 bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none"

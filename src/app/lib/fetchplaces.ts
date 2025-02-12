@@ -137,8 +137,6 @@ async function fetchPlaces(body: PlacesRequestBody): Promise<RestaurantType[]> {
             throw new Error("API returned invalid JSON");
         }
 
-        console.log("API Response:", data);
-
         if (!data.places || !Array.isArray(data.places)) {
             console.error("Invalid API response format: Missing 'places' array.");
             throw new Error("Invalid API response format: Missing 'places' array.");

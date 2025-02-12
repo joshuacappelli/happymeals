@@ -12,7 +12,7 @@ import { raw } from "express";
 
 dotenv.config();
 
-console.log("Starting merged server...");
+console.log("Starting server...");
 
 const PORT = parseInt(process.env.PORT || "3000", 10);
 const dev = process.env.NODE_ENV !== "production";
