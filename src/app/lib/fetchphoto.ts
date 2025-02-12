@@ -2,6 +2,7 @@ async function getPhotos(name : string) {
     try {
         const response = await fetch(`/api/photo?name=${name}`);
         const data = await response.json();
+        console.log("data is:");
         console.log(data);
         return data;
     }

@@ -125,7 +125,7 @@ async function fetchPlaces(body: PlacesRequestBody): Promise<RestaurantType[]> {
         });
 
         if (!response.ok) {
-            console.error(`❌ API request failed with status ${response.status}`);
+            console.error(`API request failed with status ${response.status}`);
             throw new Error(`API request failed with status ${response.status}`);
         }
 
