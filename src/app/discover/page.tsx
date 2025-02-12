@@ -109,6 +109,9 @@ const DiscoverPage = () => {
     return null;
   }
 
+  console.log(time);
+  console.log(guests);
+
   return (
     <div className="flex flex-col items-center p-4">
       <Link href="/" className="absolute top-4 left-4 hover:text-crimson transition-colors duration-300">Back to Home</Link>

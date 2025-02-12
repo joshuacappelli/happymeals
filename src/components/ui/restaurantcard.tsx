@@ -24,11 +24,13 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
     } = restaurant;
 
     const [photo, setPhoto] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
 
     async function renderPhoto() {
       const image = await getPhotos(photos[0].name);
       setPhoto(image.photoUri);
       console.log(photo);
+      setIsLoading(false);
     }
 
     useEffect(() => {
@@ -69,8 +71,10 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
     console.log(photos);
 
     
+    if(isLoading) {
+      return;
+    }
 
-    console.log("first photo googleMapsUri", photos[0].googleMapsUri);
     return (
       <div className="max-w-sm bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
         {/* Featured Image */}
@@ -157,21 +161,15 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
               href={website}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm underline mb-2 inline-block"
+              className="text-sm hover:underline mb-2 inline-block"
             >
               Visit Website
             </a>
           )}
   
-          <button
-            onClick={() => alert(`Navigate to map for: ${displayName}`)}
-            className="w-full mt-4 bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none"
-          >
-            View on Maps
-          </button>
-
-          <CallButton phoneNumber={"+19419283484"} />
+            
         </div>
+        <CallButton phoneNumber={"+19419283484"} />
       </div>
     );
   }

@@ -23,7 +23,7 @@ export default function CallButton({ phoneNumber }: CallButtonProps) {
 
   return (
     <button
-      className="bg-blue-500 text-white px-4 py-2 rounded mt-2"
+      className="px-6 py-3 font-semibold text-blue-600 bg-white border-2 border-blue-500 rounded-lg shadow-sm hover:bg-blue-500 hover:text-white hover:shadow-md transition-all duration-200 focus:ring-2 focus:ring-blue-200 focus:outline-none"
       onClick={handleCall}
     >
       Call {phoneNumber}
