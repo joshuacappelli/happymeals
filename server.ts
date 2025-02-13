@@ -99,6 +99,7 @@ async function startServer() {
                         input_audio_format: 'g711_ulaw',
                         output_audio_format: 'g711_ulaw',
                         voice: VOICE,
+                        input_audio_transcription: { model : 'whisper-1'},
                         instructions: SYSTEM_MESSAGE,
                         modalities: ["text", "audio"],
                         temperature: 0.8,
@@ -133,6 +134,8 @@ async function startServer() {
             });
     
             // Listen for messages from the OpenAI WebSocket (and send to Twilio if necessary)
+            let fullTranscript = '';
+
             openAiWs.on('message', (data) => {
                 try {
     
@@ -167,10 +170,33 @@ async function startServer() {
                         };
                         connection.send(JSON.stringify(audioDelta));
                     }
+
+
+                    if (response.type === 'response.audio_transcript.delta') {
+                        // If the transcript is in `response.delta.text`
+                        if (response.delta?.text) {
+                            console.log('Partial Transcript delta text:', response.delta.text);
+                            fullTranscript += response.delta.text;
+                        }
+                        // If the transcript is directly in `response.delta` (no nested field)
+                        else if (response.delta) {
+                            console.log('Partial Transcript delta:', response.delta);
+                            fullTranscript += response.delta;
+                        }
+                    }
+
+                    if (response.type === 'conversation.item.input_audio_transcription.completed') {
+                        console.log("response type was conversation item input");
+                    }
+                    
                 } catch (error) {
                     console.error('Error processing OpenAI message:', error, 'Raw message:', data);
                 }
             });
+
+            if(fullTranscript.trim() !== '') {
+                console.log("full transcript", fullTranscript);
+            }
     
             // Handle incoming messages from Twilio
             connection.on('message', (message) => {
