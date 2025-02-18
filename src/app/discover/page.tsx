@@ -20,6 +20,7 @@ const DiscoverPage = () => {
   const [coordinates, setCoordinates] = useState<{ lat: number; lng: number }>({ lat: 0, lng: 0 });
   const [formattedAddress, setFormattedAddress] = useState<string>("");
 
+
   // State for search parameters
   const [maxResults, setMaxResults] = useState<number>(10);
   const [distance, setDistance] = useState<number>(500);

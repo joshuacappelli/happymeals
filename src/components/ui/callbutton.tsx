@@ -2,9 +2,10 @@ import { makeCall } from "@/app/lib/makecall";
 
 interface CallButtonProps {
   phoneNumber: string;
+  onCallStart: () => void; // New prop to open modal
 }
 
-export default function CallButton({ phoneNumber }: CallButtonProps) {
+export default function CallButton({ phoneNumber, onCallStart }: CallButtonProps) {
   const handleCall = async () => {
     if (!phoneNumber) {
       alert("No phone number provided");
@@ -16,6 +17,7 @@ export default function CallButton({ phoneNumber }: CallButtonProps) {
 
     if (result) {
       alert(`Call started successfully! Call SID: ${result.sid}`);
+      onCallStart(); // Open the modal when the call starts
     } else {
       alert("Failed to start call. Check console for details.");
     }
@@ -23,7 +25,7 @@ export default function CallButton({ phoneNumber }: CallButtonProps) {
 
   return (
     <button
-      className="px-6 py-3 font-semibold text-blue-600 bg-white border-2 border-blue-500 rounded-lg shadow-sm hover:bg-blue-500 hover:text-white hover:shadow-md transition-all duration-200 focus:ring-2 focus:ring-blue-200 focus:outline-none"
+      className="px-6 py-3 font-semibold bg-white border-2 border-crimson rounded-lg shadow-sm hover:bg-crimson hover:text-white hover:shadow-md transition-all duration-200 focus:ring-2 focus:ring-crimson focus:outline-none"
       onClick={handleCall}
     >
       Call {phoneNumber}

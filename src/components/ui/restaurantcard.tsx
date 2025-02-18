@@ -1,6 +1,7 @@
 import { RestaurantType } from "@/app/lib/restaurantype";
 import  CallButton  from "@/components/ui/callbutton";
 import getPhotos from "@/app/lib/fetchphoto";
+import TranscriptModal from "./transcriptModal";
 import { useState, useEffect } from "react";
 
 interface RestaurantCardProps {
@@ -25,6 +26,8 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
 
     const [photo, setPhoto] = useState("");
     const [isLoading, setIsLoading] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
 
     async function renderPhoto() {
       const image = await getPhotos(photos[0].name);
@@ -103,7 +106,7 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
   
           {/* Primary Type (if you want it displayed) */}
           {primaryType && (
-            <p className="text-sm font-medium text-indigo-600 mb-2">
+            <p className="text-sm font-medium text-crimson mb-2">
               {primaryType}
             </p>
           )}
@@ -114,7 +117,7 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
               {displayTypes.map((type, idx) => (
                 <span
                   key={idx}
-                  className="text-xs bg-indigo-100 text-indigo-600 px-2 py-1 rounded-full"
+                  className="text-xs bg-slate-300 text-crimson px-2 py-1 rounded-full"
                 >
                   {type}
                 </span>
@@ -161,7 +164,7 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
               href={website}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm hover:underline mb-2 inline-block"
+              className="text-sm text-gray-500 hover:underline mb-2 inline-block"
             >
               Visit Website
             </a>
@@ -169,7 +172,11 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
   
             
         </div>
-        <CallButton phoneNumber={"+19419283484"} />
+        <div  className="p-4">
+          <CallButton phoneNumber={"+19419283484"}
+                      onCallStart={() => setIsModalOpen(true)} 
+                      />
+        </div>
       </div>
     );
   }

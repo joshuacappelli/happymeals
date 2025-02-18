@@ -173,20 +173,26 @@ async function startServer() {
 
 
                     if (response.type === 'response.audio_transcript.delta') {
-                        // If the transcript is in `response.delta.text`
-                        if (response.delta?.text) {
-                            console.log('Partial Transcript delta text:', response.delta.text);
-                            fullTranscript += response.delta.text;
-                        }
+                        
                         // If the transcript is directly in `response.delta` (no nested field)
-                        else if (response.delta) {
+                        if (response.delta) {
                             console.log('Partial Transcript delta:', response.delta);
                             fullTranscript += response.delta;
+
+                            connection.send(JSON.stringify({
+                                event: 'transcript.ai',
+                                transcript: fullTranscript
+                            }));
                         }
                     }
 
                     if (response.type === 'conversation.item.input_audio_transcription.completed') {
                         console.log("response type was conversation item input");
+                        console.log(response.transcript);
+                        connection.send(JSON.stringify({
+                            event: 'transcript.user',
+                            transcript: response.trascript
+                        }));
                     }
                     
                 } catch (error) {
