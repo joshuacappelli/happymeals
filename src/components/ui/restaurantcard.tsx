@@ -71,7 +71,6 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
   
     // Limit the list of types to 3
     const displayTypes = types.slice(0, 4);
-    console.log(photos);
 
     
     if(isLoading) {
@@ -177,6 +176,12 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
                       onCallStart={() => setIsModalOpen(true)} 
                       />
         </div>
+        <TranscriptModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
       </div>
+
+      
     );
   }

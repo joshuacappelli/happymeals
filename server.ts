@@ -179,20 +179,30 @@ async function startServer() {
                             console.log('Partial Transcript delta:', response.delta);
                             fullTranscript += response.delta;
 
-                            connection.send(JSON.stringify({
-                                event: 'transcript.ai',
-                                transcript: fullTranscript
-                            }));
+                            if (connection.readyState === connection.OPEN) {
+                                connection.send(JSON.stringify({
+                                    event: 'transcript.ai',
+                                    transcript: fullTranscript
+                                }));
+                            } else {
+                                console.error("WebSocket connection is not open. Cannot send transcript.");
+                            }
+                            
                         }
                     }
 
                     if (response.type === 'conversation.item.input_audio_transcription.completed') {
                         console.log("response type was conversation item input");
                         console.log(response.transcript);
-                        connection.send(JSON.stringify({
-                            event: 'transcript.user',
-                            transcript: response.trascript
-                        }));
+                        if (connection.readyState === connection.OPEN) {
+                            connection.send(JSON.stringify({
+                                event: 'transcript.user',
+                                transcript: response.transcript
+                            }));
+                        } else {
+                            console.error("WebSocket connection is not open. Cannot send transcript.");
+                        }
+                        
                     }
                     
                 } catch (error) {
@@ -262,36 +272,6 @@ async function startServer() {
             });
         });
     });
-    
-
-
-    // Handle Twilio Call Request
-    // server.post("/call", async (request, reply) => {
-    //   const { to } = request.body as { to: string };
-    //   console.log("request body is: ", request.body);
-    //   if (!to) {
-    //     return reply.status(400).send({ error: "Missing 'to' phone number" });
-    //   }
-
-    //   const isAllowed = await isNumberAllowed(to);
-    //   if (!isAllowed) {
-    //     return reply.status(403).send({ error: `Number ${to} is not allowed.` });
-    //   }
-
-    //   try {
-    //     const call = await client.calls.create({
-    //       from: PHONE_NUMBER_FROM!,
-    //       to,
-    //       twiml: outboundTwiML,
-    //     });
-    //     console.log(`Call started with SID: ${call.sid}`);
-    //     return reply.send({ success: true, sid: call.sid });
-    //   } catch (error) {
-    //     console.error("Error making call:", error);
-    //     return reply.status(500).send({ error: "Failed to initiate call" });
-    //   }
-    // });
-
 
 
     // Start Fastify Server

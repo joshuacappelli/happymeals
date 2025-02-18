@@ -6,33 +6,57 @@ const TranscriptModal = ({ isOpen, onClose }) => {
 
 
     useEffect(() => {
-        const rawDomain = process.env.DOMAIN;
-        if(!rawDomain) {
+        if (!isOpen) return;
+    
+        const rawDomain = process.env.NEXT_PUBLIC_DOMAIN;
+        if (!rawDomain) {
+            console.error("DOMAIN environment variable is missing");
             return;
         }
-
+    
         const DOMAIN = rawDomain.replace(/(^\w+:|^)\/\//, "").replace(/\/+$/, "");
-
-        const socket = new WebSocket(`wss://${DOMAIN}/media-stream`);
-
-        socket.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-
-            if (data.event === "transcript.ai") {
-                setAiTranscript(data.transcript);
-            } else if (data.event === "transcript.user") {
-                setUserTranscript(data.transcript);
+        let socket: WebSocket | null = null;
+    
+        try {
+            socket = new WebSocket(`wss://${DOMAIN}/media-stream`);
+            console.log("WebSocket connection attempting...");
+    
+            socket.onopen = () => {
+                console.log("WebSocket connection established");
+            };
+    
+            socket.onmessage = (event) => {
+                console.log("Event received:", event);
+                const data = JSON.parse(event.data);
+    
+                if (data.event === "transcript.ai") {
+                    console.log("AI Data event:", data.transcript);
+                    setAiTranscript((prev) => prev + " " + data.transcript);
+                } else if (data.event === "transcript.user") {
+                    console.log("User Data event:", data.transcript);
+                    setUserTranscript((prev) => prev + " " + data.transcript);
+                }
+            };
+    
+            socket.onerror = (error) => {
+                console.error("WebSocket error on client:", error);
+            };
+    
+            socket.onclose = (event) => {
+                console.warn("WebSocket closed:", event);
+            };
+        } catch (err) {
+            console.error("WebSocket connection error:", err);
+        }
+    
+        return () => {
+            if (socket) {
+                console.log("Closing WebSocket connection...");
+                socket.close();
             }
         };
-
-        socket.onerror = (error) => {
-            console.error("WebSocket error:", error);
-        };
-
-        return () => {
-            socket.close();
-        };
-    }, []);
+    }, [isOpen]);
+    
 
     if (!isOpen) return null;
 
