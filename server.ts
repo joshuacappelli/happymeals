@@ -78,10 +78,19 @@ async function startServer() {
       await handle(req.raw, res.raw);
     });
 
+    // server.register(async (fastify : FastifyInstance) => {
+    //     fastify.get('/ping', {websocket: true}, (connection,req) => {
+    //         console.log("ping pong connected");
+    //     });
+    // });
+
+
     server.register(async (fastify :FastifyInstance) => {
         // Setup WebSocket server for handling media streams
         fastify.get('/media-stream', { websocket: true }, (connection, req) => {
             console.log('Client connected');
+            
+            
             const openAiWs = new WebSocket('wss://api.openai.com/v1/realtime?model=gpt-4o-realtime-preview-2024-10-01', {
                 headers : {
                     Authorization: `Bearer ${OPENAI_API_KEY}`,
@@ -117,7 +126,7 @@ async function startServer() {
                         content: [
                             {
                                 type: 'input_text',
-                                text: 'Greet the user with "Hello there! I\'m an AI voice assistant from Twilio and the OpenAI Realtime API. How can I help?"'
+                                text: 'Greet the restaurant with "Hello there! I\'m hoping to book a reservation at this restaurant!"'
                             }
                         ]
                     }
@@ -176,14 +185,17 @@ async function startServer() {
                         
                         // If the transcript is directly in `response.delta` (no nested field)
                         if (response.delta) {
-                            console.log('Partial Transcript delta:', response.delta);
                             fullTranscript += response.delta;
 
-                            if (connection.readyState === connection.OPEN) {
-                                connection.send(JSON.stringify({
-                                    event: 'transcript.ai',
-                                    transcript: fullTranscript
-                                }));
+                            if (connection.readyState === connection.OPEN) {    
+                                const message = JSON.stringify({
+                                    event: "transcript.ai",
+                                    transcript: response.delta
+                                });
+
+                                console.log("Sending WebSocket message:", message);
+
+                                connection.send(message);
                             } else {
                                 console.error("WebSocket connection is not open. Cannot send transcript.");
                             }
@@ -195,10 +207,16 @@ async function startServer() {
                         console.log("response type was conversation item input");
                         console.log(response.transcript);
                         if (connection.readyState === connection.OPEN) {
-                            connection.send(JSON.stringify({
+                            console.log("sending to transcript.user");
+                            const message = JSON.stringify({
                                 event: 'transcript.user',
                                 transcript: response.transcript
-                            }));
+                            });
+
+
+                            console.log("Sending WebSocket message:", message);
+
+                            connection.send(message);
                         } else {
                             console.error("WebSocket connection is not open. Cannot send transcript.");
                         }
@@ -209,10 +227,6 @@ async function startServer() {
                     console.error('Error processing OpenAI message:', error, 'Raw message:', data);
                 }
             });
-
-            if(fullTranscript.trim() !== '') {
-                console.log("full transcript", fullTranscript);
-            }
     
             // Handle incoming messages from Twilio
             connection.on('message', (message) => {

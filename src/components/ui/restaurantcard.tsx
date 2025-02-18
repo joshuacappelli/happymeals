@@ -32,7 +32,6 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
     async function renderPhoto() {
       const image = await getPhotos(photos[0].name);
       setPhoto(image.photoUri);
-      console.log(photo);
       setIsLoading(false);
     }
 
