@@ -3,11 +3,12 @@
 // const TranscriptModal = ({ isOpen, onClose }) => {
 //     const [aiTranscript, setAiTranscript] = useState("");
 //     const [userTranscript, setUserTranscript] = useState("");
-//     const socketRef = useRef<WebSocket | null>(null); // Store WebSocket persistently
+//     const socketRef = useRef<WebSocket | null>(null);
+
 
 //     useEffect(() => {
 //         if (!isOpen) {
-//             console.log("Modal is closed, not opening WebSocket.");
+//             console.log("Modal is closed, skipping WebSocket connection.");
 //             return;
 //         }
 
@@ -18,62 +19,45 @@
 //         }
 
 //         const DOMAIN = rawDomain.replace(/(^\w+:|^)\/\//, "").replace(/\/+$/, "");
-        
-//         if (socketRef.current) {
-//             console.log("WebSocket already exists, reusing connection.");
-//             return;
-//         }
-
-//         console.log("Opening WebSocket connection...");
 //         const socket = new WebSocket(`wss://${DOMAIN}/media-stream`);
 //         socketRef.current = socket;
 
+//         console.log("WebSocket connection attempting...");
+
 //         socket.onopen = () => {
 //             console.log("WebSocket connection established");
-//             socket.send(JSON.stringify({ type: "connection_init" }));
-//         }
+//         };
 
 //         socket.onmessage = (event) => {
-//             console.log("Raw message type:", event.type);
-//             try {
-//         // Handle only text messages
-//                 if (typeof event.data !== 'string') {
-//                     console.warn("Received non-text message, ignoring");
-//                     return;
-//                 }
-                
-//                 const data = JSON.parse(event.data);
-//                 console.log("Parsed WebSocket Data:", data);
-//                 console.log("event type: ", data.event);
+//             console.log("Received WebSocket message:", event.data);
 
+//             try {
+//                 const data = JSON.parse(event.data);
 //                 if (data.event === "transcript.ai") {
-//                     setAiTranscript((prev) => `${prev} ${data.transcript}`.trim());
+//                     setAiTranscript((prev) => (prev ? `${prev} ${data.transcript}` : data.transcript));
+//                     console.log("AI ",data.transcript);
 //                 } else if (data.event === "transcript.user") {
 //                     setUserTranscript((prev) => `${prev} ${data.transcript}`.trim());
+//                     console.log("Human", data.transcript);
 //                 } else {
-//                     console.log("Other WebSocket event:", data.event);
+//                     console.log("Unhandled WebSocket event:", data.event);
 //                 }
 //             } catch (error) {
-//                 console.error("Error parsing WebSocket message:", error);
+//                 console.error("Error parsing WebSocket message:", error, event.data);
 //             }
 //         };
 
-//         socket.onerror = (error) => console.error("WebSocket error on client:", error);
+//         socket.onerror = (error) => {
+//             console.error("WebSocket error:", error);
+//         };
+
 //         socket.onclose = (event) => {
 //             console.warn("WebSocket closed:", event);
-//             socketRef.current = null; // Reset ref when closed
 //         };
-
-//         const heartbeatInterval = setInterval(() => {
-//             if (socket.readyState === WebSocket.OPEN) {
-//                 socket.send(JSON.stringify({ type: "heartbeat" }));
-//             }
-//         }, 30000);
 
 //         return () => {
 //             console.log("Closing WebSocket connection...");
-//             clearInterval(heartbeatInterval);
-//             socketRef.current?.close();
+//             socket.close();
 //             socketRef.current = null;
 //         };
 //     }, [isOpen]);
@@ -100,13 +84,13 @@
 
 // export default TranscriptModal;
 
+
 import React, { useState, useEffect, useRef } from "react";
 
 const TranscriptModal = ({ isOpen, onClose }) => {
     const [aiTranscript, setAiTranscript] = useState("");
     const [userTranscript, setUserTranscript] = useState("");
     const socketRef = useRef<WebSocket | null>(null);
-
 
     useEffect(() => {
         if (!isOpen) {
@@ -121,64 +105,104 @@ const TranscriptModal = ({ isOpen, onClose }) => {
         }
 
         const DOMAIN = rawDomain.replace(/(^\w+:|^)\/\//, "").replace(/\/+$/, "");
-        const socket = new WebSocket(`wss://${DOMAIN}/media-stream`);
+        // Connect to the UI updates WebSocket endpoint instead of media-stream
+        const socket = new WebSocket(`wss://${DOMAIN}/ui-updates`);
         socketRef.current = socket;
 
-        console.log("WebSocket connection attempting...");
+        console.log("UI WebSocket connection attempting...");
 
         socket.onopen = () => {
-            console.log("WebSocket connection established");
+            console.log("UI WebSocket connection established");
         };
 
         socket.onmessage = (event) => {
-            console.log("Received WebSocket message:", event.data);
+            console.log("Received UI WebSocket message:", event.data);
 
             try {
                 const data = JSON.parse(event.data);
                 if (data.event === "transcript.ai") {
-                    setAiTranscript((prev) => (prev ? `${prev} ${data.transcript}` : data.transcript));
-                    console.log("AI ",data.transcript);
+                    setAiTranscript((prev) => {
+                        const newTranscript = prev ? `${prev}${data.transcript}` : data.transcript;
+                        console.log("Updated AI transcript:", newTranscript);
+                        return newTranscript;
+                    });
                 } else if (data.event === "transcript.user") {
-                    setUserTranscript((prev) => `${prev} ${data.transcript}`.trim());
-                    console.log("Human", data.transcript);
+                    setUserTranscript((prev) => {
+                        const newTranscript = `${prev} ${data.transcript}`.trim();
+                        console.log("Updated user transcript:", newTranscript);
+                        return newTranscript;
+                    });
                 } else {
-                    console.log("Unhandled WebSocket event:", data.event);
+                    console.log("Unhandled UI WebSocket event:", data.event);
                 }
             } catch (error) {
-                console.error("Error parsing WebSocket message:", error, event.data);
+                console.error("Error parsing UI WebSocket message:", error, event.data);
             }
         };
 
         socket.onerror = (error) => {
-            console.error("WebSocket error:", error);
+            console.error("UI WebSocket error:", error);
         };
 
         socket.onclose = (event) => {
-            console.warn("WebSocket closed:", event);
+            console.warn("UI WebSocket closed:", event);
         };
 
         return () => {
-            console.log("Closing WebSocket connection...");
-            socket.close();
+            console.log("Closing UI WebSocket connection...");
+            if (socketRef.current?.readyState === WebSocket.OPEN) {
+                socketRef.current.close();
+            }
             socketRef.current = null;
         };
+    }, [isOpen]);
+
+    // Reset transcripts when modal is closed
+    useEffect(() => {
+        if (!isOpen) {
+            setAiTranscript("");
+            setUserTranscript("");
+        }
     }, [isOpen]);
 
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-            <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-                <h2 className="text-lg font-semibold mb-2">Live Transcription</h2>
-                <p className="text-sm font-bold">User:</p>
-                <p className="text-gray-700 border-b pb-2">{userTranscript || "Waiting for input..."}</p>
-                
-                <p className="text-sm font-bold mt-2">AI:</p>
-                <p className="text-gray-700">{aiTranscript || "Waiting for response..."}</p>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-8">
+            <div className="bg-white rounded-xl shadow-2xl w-3/4 h-3/4 flex flex-col">
+                {/* Header */}
+                <div className="p-6 border-b flex justify-between items-center">
+                    <h2 className="text-2xl font-semibold">Live Transcription</h2>
+                    <button 
+                        onClick={onClose} 
+                        className="px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors"
+                    >
+                        Close
+                    </button>
+                </div>
 
-                <button onClick={onClose} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg">
-                    Close
-                </button>
+                {/* Content */}
+                <div className="flex-1 p-6 grid grid-cols-2 gap-8 overflow-hidden">
+                    {/* User Transcript */}
+                    <div className="flex flex-col h-full">
+                        <div className="bg-gray-50 rounded-lg p-6 flex-1 overflow-y-auto">
+                            <h3 className="text-lg font-bold text-gray-700 mb-4">User Transcript</h3>
+                            <p className="text-gray-600 whitespace-pre-wrap">
+                                {userTranscript || "Waiting for input..."}
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* AI Transcript */}
+                    <div className="flex flex-col h-full">
+                        <div className="bg-blue-50 rounded-lg p-6 flex-1 overflow-y-auto">
+                            <h3 className="text-lg font-bold text-crimson mb-4">AI Response</h3>
+                            <p className="text-gray-600 whitespace-pre-wrap">
+                                {aiTranscript || "Waiting for response..."}
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );
