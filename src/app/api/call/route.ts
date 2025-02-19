@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import twilio from "twilio";
-import { eventBus } from '@/app/lib/eventBus';
 
 // Load Environment Variables
 const {
@@ -48,8 +47,7 @@ export async function POST(req: Request) {
     });
 
     console.log(`Call started with SID: ${call.sid}`);
-    eventBus.emit('newCall', { sid: call.sid, to, startTime: new Date() });
-    
+
     return NextResponse.json({ success: true, sid: call.sid });
   } catch (error) {
     console.error("Error making call:", error);

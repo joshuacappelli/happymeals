@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { SearchContext } from '@/app/context/searchcontext';
 import PlacesSelectionPanel from '@/components/ui/searchpanel';
 import getCoordinates from '../lib/geocoding';
@@ -13,6 +13,41 @@ const DiscoverPage = () => {
   const { address } = useContext(SearchContext);
 
   const [isclient, setIsclient] = useState(false);
+  const wsRef = useRef<WebSocket | null>(null);
+
+  useEffect(() => {
+    const rawDomain = process.env.NEXT_PUBLIC_DOMAIN;
+        if (!rawDomain) {
+            console.error("DOMAIN environment variable is missing");
+            return;
+        }   
+
+    const DOMAIN = rawDomain.replace(/(^\w+:|^)\/\//, "").replace(/\/+$/, "");
+    const socket = new WebSocket(`wss://${DOMAIN}/ui-updates`);
+    wsRef.current = socket;
+  
+    socket.onopen = () => {
+      console.log("Connected to /ui-updates");
+    };
+  
+    socket.onmessage = (event) => {
+      console.log("Received from server:", event.data);
+    };
+  
+    socket.onerror = (err) => {
+      console.error("WebSocket error:", err);
+    };
+  
+    socket.onclose = () => {
+      console.log("WebSocket closed");
+    };
+  
+    return () => {
+      socket.close();
+      wsRef.current = null;
+    };
+  }, []);
+
 
   useEffect(() => {
     setIsclient(true);
@@ -36,15 +71,26 @@ const DiscoverPage = () => {
     distance: number,
     restaurantType: string[],
     preference: string,
-    time: string,
-    guests: number
+    timeval: string,
+    guestsval: number
   ) => {
     setMaxResults(maxResults);
     setDistance(distance);
     setRestaurantType(restaurantType);
     setPreference(preference);
-    setTime(time);
-    setGuests(guests)
+    setTime(timeval);
+    setGuests(guestsval)
+
+
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+      wsRef.current.send(
+        JSON.stringify({
+          type: "searchParams",
+          time: timeval,
+          guests: guestsval,
+        })
+      );
+    }
   };
 
   const handleSearch = async () => {

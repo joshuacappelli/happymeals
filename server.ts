@@ -44,6 +44,9 @@ const VOICE = "alloy";
 const outboundTwiML = `<?xml version="1.0" encoding="UTF-8"?><Response><Connect><Stream url="wss://${DOMAIN}/media-stream" /></Connect></Response>`;
 const client = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
 
+let guests = 1;
+let time = "";
+
 const server = fastify({ logger: true });
 
 // Broadcast to all UI connections
@@ -79,6 +82,23 @@ async function startServer() {
         console.log('UI client connected');
         uiConnections.add(connection);
 
+        connection.on('message', (rawMessage) => {
+            try {
+                const msg = JSON.parse(rawMessage.toString());
+
+                if (msg.type === "searchParams") {
+                    time = msg.time;
+                    guests = msg.guests;
+
+                    console.log("updated server time: ", time);
+                    console.log("updated server guests: ", guests);
+                }
+
+            } catch(error) {
+                console.error("error parsing data:", error);
+            }
+        });
+
         connection.on('close', () => {
           console.log('UI client disconnected');
           uiConnections.delete(connection);
@@ -108,7 +128,7 @@ async function startServer() {
               output_audio_format: 'g711_ulaw',
               voice: VOICE,
               input_audio_transcription: { model: 'whisper-1' },
-              instructions: SYSTEM_MESSAGE,
+              instructions: SYSTEM_MESSAGE + `for ${guests} people at time: ${time}`,
               modalities: ["text", "audio"],
               temperature: 0.8,
             }
@@ -124,7 +144,7 @@ async function startServer() {
               content: [
                 {
                   type: 'input_text',
-                  text: 'Greet the restaurant with "Hello there! I\'m hoping to book a reservation at this restaurant!"'
+                  text: `Greet the restaurant with "Hello there! I\'m hoping to book a reservation for ${guests} at ${time}`
                 }
               ]
             }
