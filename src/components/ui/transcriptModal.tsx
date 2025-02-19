@@ -1,90 +1,3 @@
-// import React, { useState, useEffect, useRef } from "react";
-
-// const TranscriptModal = ({ isOpen, onClose }) => {
-//     const [aiTranscript, setAiTranscript] = useState("");
-//     const [userTranscript, setUserTranscript] = useState("");
-//     const socketRef = useRef<WebSocket | null>(null);
-
-
-//     useEffect(() => {
-//         if (!isOpen) {
-//             console.log("Modal is closed, skipping WebSocket connection.");
-//             return;
-//         }
-
-//         const rawDomain = process.env.NEXT_PUBLIC_DOMAIN;
-//         if (!rawDomain) {
-//             console.error("DOMAIN environment variable is missing");
-//             return;
-//         }
-
-//         const DOMAIN = rawDomain.replace(/(^\w+:|^)\/\//, "").replace(/\/+$/, "");
-//         const socket = new WebSocket(`wss://${DOMAIN}/media-stream`);
-//         socketRef.current = socket;
-
-//         console.log("WebSocket connection attempting...");
-
-//         socket.onopen = () => {
-//             console.log("WebSocket connection established");
-//         };
-
-//         socket.onmessage = (event) => {
-//             console.log("Received WebSocket message:", event.data);
-
-//             try {
-//                 const data = JSON.parse(event.data);
-//                 if (data.event === "transcript.ai") {
-//                     setAiTranscript((prev) => (prev ? `${prev} ${data.transcript}` : data.transcript));
-//                     console.log("AI ",data.transcript);
-//                 } else if (data.event === "transcript.user") {
-//                     setUserTranscript((prev) => `${prev} ${data.transcript}`.trim());
-//                     console.log("Human", data.transcript);
-//                 } else {
-//                     console.log("Unhandled WebSocket event:", data.event);
-//                 }
-//             } catch (error) {
-//                 console.error("Error parsing WebSocket message:", error, event.data);
-//             }
-//         };
-
-//         socket.onerror = (error) => {
-//             console.error("WebSocket error:", error);
-//         };
-
-//         socket.onclose = (event) => {
-//             console.warn("WebSocket closed:", event);
-//         };
-
-//         return () => {
-//             console.log("Closing WebSocket connection...");
-//             socket.close();
-//             socketRef.current = null;
-//         };
-//     }, [isOpen]);
-
-//     if (!isOpen) return null;
-
-//     return (
-//         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-//             <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-//                 <h2 className="text-lg font-semibold mb-2">Live Transcription</h2>
-//                 <p className="text-sm font-bold">User:</p>
-//                 <p className="text-gray-700 border-b pb-2">{userTranscript || "Waiting for input..."}</p>
-                
-//                 <p className="text-sm font-bold mt-2">AI:</p>
-//                 <p className="text-gray-700">{aiTranscript || "Waiting for response..."}</p>
-
-//                 <button onClick={onClose} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg">
-//                     Close
-//                 </button>
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default TranscriptModal;
-
-
 import React, { useState, useEffect, useRef } from "react";
 
 const TranscriptModal = ({ isOpen, onClose }) => {
@@ -102,7 +15,7 @@ const TranscriptModal = ({ isOpen, onClose }) => {
         if (!rawDomain) {
             console.error("DOMAIN environment variable is missing");
             return;
-        }
+        }   
 
         const DOMAIN = rawDomain.replace(/(^\w+:|^)\/\//, "").replace(/\/+$/, "");
         // Connect to the UI updates WebSocket endpoint instead of media-stream

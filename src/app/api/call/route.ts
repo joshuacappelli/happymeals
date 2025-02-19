@@ -1,35 +1,6 @@
-// import { NextResponse } from "next/server";
-
-// export async function POST(req: Request) {
-//   try {
-//     const body = await req.json(); 
-//     const { to } = body;
-//     console.log("post request body: ", to);
-
-
-//     if (!to) {
-//       console.error("Missing 'to' phone number in request!");
-//       return NextResponse.json({ error: "Missing 'to' phone number" }, { status: 400 });
-//     }
-
-//     console.log(`Received call request to ${to}`);
-
-//     // Twilio Call Logic (Replace with your Twilio client)
-//     const call = {
-//       success: true,
-//       sid: `TEST_SID_${Date.now()}`,
-//     };
-
-//     console.log(`Call started with SID: ${call.sid}`);
-//     return NextResponse.json(call);
-//   } catch (error) {
-//     console.error("Error making call:", error);
-//     return NextResponse.json({ error: "Failed to initiate call" }, { status: 500 });
-//   }
-// }
-
 import { NextResponse } from "next/server";
 import twilio from "twilio";
+import { eventBus } from '@/app/lib/eventBus';
 
 // Load Environment Variables
 const {
@@ -77,6 +48,8 @@ export async function POST(req: Request) {
     });
 
     console.log(`Call started with SID: ${call.sid}`);
+    eventBus.emit('newCall', { sid: call.sid, to, startTime: new Date() });
+    
     return NextResponse.json({ success: true, sid: call.sid });
   } catch (error) {
     console.error("Error making call:", error);
