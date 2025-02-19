@@ -78,17 +78,11 @@ async function startServer() {
       await handle(req.raw, res.raw);
     });
 
-    // server.register(async (fastify : FastifyInstance) => {
-    //     fastify.get('/ping', {websocket: true}, (connection,req) => {
-    //         console.log("ping pong connected");
-    //     });
-    // });
-
-
     server.register(async (fastify :FastifyInstance) => {
         // Setup WebSocket server for handling media streams
         fastify.get('/media-stream', { websocket: true }, (connection, req) => {
             console.log('Client connected');
+            const isTwilio = !!req.headers["x-twilio-signature"] || !req.headers["origin"];
             
             
             const openAiWs = new WebSocket('wss://api.openai.com/v1/realtime?model=gpt-4o-realtime-preview-2024-10-01', {
@@ -183,7 +177,6 @@ async function startServer() {
 
                     if (response.type === 'response.audio_transcript.delta') {
                         
-                        // If the transcript is directly in `response.delta` (no nested field)
                         if (response.delta) {
                             fullTranscript += response.delta;
 

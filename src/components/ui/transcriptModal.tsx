@@ -107,6 +107,7 @@ const TranscriptModal = ({ isOpen, onClose }) => {
     const [userTranscript, setUserTranscript] = useState("");
     const socketRef = useRef<WebSocket | null>(null);
 
+
     useEffect(() => {
         if (!isOpen) {
             console.log("Modal is closed, skipping WebSocket connection.");
@@ -135,9 +136,11 @@ const TranscriptModal = ({ isOpen, onClose }) => {
             try {
                 const data = JSON.parse(event.data);
                 if (data.event === "transcript.ai") {
-                    setAiTranscript((prev) => `${prev} ${data.transcript}`.trim());
+                    setAiTranscript((prev) => (prev ? `${prev} ${data.transcript}` : data.transcript));
+                    console.log("AI ",data.transcript);
                 } else if (data.event === "transcript.user") {
                     setUserTranscript((prev) => `${prev} ${data.transcript}`.trim());
+                    console.log("Human", data.transcript);
                 } else {
                     console.log("Unhandled WebSocket event:", data.event);
                 }
