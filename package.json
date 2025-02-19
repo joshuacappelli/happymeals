@@ -4,10 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "npx tsx server.ts",
     "custombuild": "next build && tsc",
     "customdev": "npx tsx server.ts",
-    "build": "next build",
+    "build": "next build && tsc",
     "start": "next start",
     "lint": "next lint",
     "customstart": "NODE_ENV=production node server.js"
