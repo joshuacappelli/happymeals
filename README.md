@@ -30,12 +30,12 @@ This project provides restaurant recommendations based on user preferences and c
 2. **AI-Driven Dialog**  
    - ChatGPT can further refine or adjust recommendations based on user feedback.
 
-3. **Text-to-Speech**  
-   - ElevenLabs synthesizes ChatGPT’s text responses into natural-sounding voice.
+3. **Speech-to-Speech**  
+   - OpenAI realtime api for speech to speech allowing for natural sounding low latency calls
 
 4. **Voice Calls with Twilio**  
    - Initiate calls to restaurants to make reservations or ask questions.  
-   - Configure Twilio webhooks to handle call flows.
+   - Configure Twilio websockets to handle call flows.
 
 ---
 
@@ -46,16 +46,13 @@ This project provides restaurant recommendations based on user preferences and c
    - Displays recommendations and call status.
 
 2. **Next.js API Routes**  
-   - `/api/chat` to communicate with ChatGPT.  
-   - `/api/voice` to generate ElevenLabs TTS audio.  
+   - `/api/photo` get restaurant photos from google maps
+   - `/api/geocoding` get location data from google maps 
+   - `/api/places` get all necessary place information from each location
    - `/api/call` to place outgoing calls with Twilio.  
-   - `/api/voice-call-twiml` to provide Twilio instructions (TwiML) during calls.
 
 3. **OpenAI (ChatGPT)**  
-   - Processes user messages and preferences to generate restaurant recommendations or conversation text.
-
-4. **ElevenLabs**  
-   - Converts ChatGPT text into speech audio files.
+   - Processes user and chatbot dialogue for reservations.
 
 5. **Twilio**  
    - Manages actual phone calls (outgoing and/or incoming).  
@@ -68,15 +65,18 @@ This project provides restaurant recommendations based on user preferences and c
 - **Node.js** (>=14.x recommended)
 - **npm** or **Yarn**
 - **OpenAI Account** (for ChatGPT API Key)
-- **ElevenLabs Account** (for TTS API Key)
 - **Twilio Account** (for phone calls, SID, Auth Token, purchased phone number)
-- A publicly accessible URL for Twilio webhooks (for production deployment)
+- A publicly accessible URL for Twilio websockets (for production deployment)
+- **google maps api account** (for accessing all the google maps data)
+- **ngrok account** (necessary for twilio voice calls use forwarding address in your env as the domain)
 
 ---
 
 ## Installation
 
 1. **Clone the Repository**  
-   ```bash
-   git clone https://github.com/your-username/ai-restaurant-app.git
-   cd ai-restaurant-app
+2. **put in the necessary keys in our own .env file**
+3. **build using npm run custombuild**
+4. **ngrok http 6060 (or whatever port you want)**
+5. **place forwarding address in your env**
+6. **run using npm run customdev**

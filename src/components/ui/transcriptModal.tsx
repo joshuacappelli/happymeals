@@ -81,7 +81,7 @@ const TranscriptModal = ({ isOpen, onClose }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-8">
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center p-8">
             <div className="bg-white rounded-xl shadow-2xl w-3/4 h-3/4 flex flex-col">
                 {/* Header */}
                 <div className="p-6 border-b flex justify-between items-center">
