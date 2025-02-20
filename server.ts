@@ -274,7 +274,7 @@ async function startServer() {
       });
     });
 
-    server.listen({ port: PORT, host: '0.0.0.0' }, (err, address) => {
+    server.listen({ host: '::', port: PORT}, (err, address) => {
       if (err) {
         console.error("Error starting server:", err);
         process.exit(1);
