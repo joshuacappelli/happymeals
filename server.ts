@@ -57,7 +57,6 @@ if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !PHONE_NUMBER_FROM || !rawDomai
 
 const DOMAIN = rawDomain.replace(/(^\w+:|^)\/\//, "").replace(/\/+$/, "");
 const VOICE = "alloy";
-const outboundTwiML = `<?xml version="1.0" encoding="UTF-8"?><Response><Connect><Stream url="wss://${DOMAIN}/media-stream" /></Connect></Response>`;
 const client = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
 
 let guests = 1;
@@ -86,9 +85,7 @@ async function startServer() {
     await server.register(fastifyFormBody);
     await server.register(fastifyWs);
 
-    server.get('/', async (_req, res) => {
-        return { message: 'Server is running' };
-      });
+    
 
     server.all("/api/*", async (req, res) => {
       await handle(req.raw, res.raw);
@@ -97,6 +94,9 @@ async function startServer() {
     server.all("*", async (req, res) => {
       await handle(req.raw, res.raw);
     });
+
+    
+      
 
 
     server.register(async (fastify: FastifyInstance) => {
