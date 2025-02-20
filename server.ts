@@ -201,16 +201,7 @@ async function startServer() {
               console.log(`Received event: ${response.type}`, response);
             }
 
-            if (response.response.status === 'failed') {
-                console.error('OpenAI Realtime API failed:', JSON.stringify(response.response.status_details, null, 2));
-              
-                // Log the specific error details
-                if (response.response.status_details && response.response.status_details.error) {
-                  console.error('Error Details:', JSON.stringify(response.status_details.error, null, 2));
-                }
-              
-                return; // Stop further processing
-              }
+            
 
             if (response.type === 'response.audio.delta' && response.delta) {
               const audioDelta = {
@@ -292,7 +283,7 @@ async function startServer() {
       });
     });
 
-    server.listen({ host: '::', port: Number(process.env.PORT) || 3000}, (err, address) => {
+    server.listen({host:'::', port: Number(process.env.PORT) || 3000}, (err, address) => {
       if (err) {
         console.error("Error starting server:", err);
         process.exit(1);
