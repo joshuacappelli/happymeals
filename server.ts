@@ -76,7 +76,9 @@ function broadcastToUI(message: any) {
 
 async function startServer() {
   try {
-    await app.prepare();
+    console.log("Starting Next.js...");
+    await app.prepare(); 
+    console.log("Next.js is ready.");
 
     server.addContentTypeParser("application/json", noOpParser);
     server.addContentTypeParser("text/plain", noOpParser);
