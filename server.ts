@@ -274,7 +274,7 @@ async function startServer() {
       });
     });
 
-    server.listen({ host: '::', port: PORT}, (err, address) => {
+    server.listen({ host: '::', port: Number(process.env.PORT) || 3000}, (err, address) => {
       if (err) {
         console.error("Error starting server:", err);
         process.exit(1);
