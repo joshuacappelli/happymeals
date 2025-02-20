@@ -12,7 +12,7 @@ dotenv.config();
 
 console.log("Starting server...");
 
-const PORT = parseInt(process.env.PORT || "3000", 10);
+const PORT = parseInt(process.env.PORT || "6060", 10);
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
 const handle = app.getRequestHandler();
@@ -274,7 +274,7 @@ async function startServer() {
       });
     });
 
-    server.listen({ port: PORT }, (err, address) => {
+    server.listen({ port: PORT, host: '0.0.0.0' }, (err, address) => {
       if (err) {
         console.error("Error starting server:", err);
         process.exit(1);
