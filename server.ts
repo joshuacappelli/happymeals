@@ -201,10 +201,16 @@ async function startServer() {
               console.log(`Received event: ${response.type}`, response);
             }
 
-            if (response.status === 'failed') {
-                console.log('openai realtime api failed:', JSON.stringify(response.status_details,null,2));
-                return;
-            }
+            if (response.response.status === 'failed') {
+                console.error('OpenAI Realtime API failed:', JSON.stringify(response.response.status_details, null, 2));
+              
+                // Log the specific error details
+                if (response.response.status_details && response.response.status_details.error) {
+                  console.error('Error Details:', JSON.stringify(response.status_details.error, null, 2));
+                }
+              
+                return; // Stop further processing
+              }
 
             if (response.type === 'response.audio.delta' && response.delta) {
               const audioDelta = {
