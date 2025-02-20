@@ -16,7 +16,6 @@ export default function CallButton({ phoneNumber, onCallStart }: CallButtonProps
     const result = await makeCall(phoneNumber);
 
     if (result) {
-      alert("Call started successfully! Call SID: ${result.sid}");
       onCallStart(); // Open the modal when the call starts
     } else {
       alert("Failed to start call. Check console for details.");
