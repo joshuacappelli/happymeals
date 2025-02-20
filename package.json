@@ -2,13 +2,13 @@
   "name": "happymeals",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "scripts": {
     "dev": "npx tsx server.ts",
     "custombuild": "next build && tsc",
     "customdev": "npx tsx server.ts",
     "build": "next build && tsc",
-    "start": "next start",
+    "postbuild": "tsc -p tsconfig.server.json",
+    "start": "cross-env NODE_ENV=production node -r module-alias/register ./dist/server.js",
     "lint": "next lint",
     "customstart": "NODE_ENV=production node server.js"
   },

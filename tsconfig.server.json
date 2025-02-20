@@ -1,0 +1,32 @@
+{
+    // Inherit from your base tsconfig (for general settings)
+    "extends": "./tsconfig.json",
+  
+    "compilerOptions": {
+      // We want CommonJS for Node server
+      "module": "CommonJS",
+      "moduleResolution": "node",
+      // We'll output to dist/
+      "outDir": "dist",
+      "noEmit": false,
+      "esModuleInterop": true,
+      "allowJs": true,
+      // "jsx" can be "react" or "preserve" if your server code has some JSX, 
+      // but typically a pure Node server doesn't.
+      "jsx": "react"
+    },
+  
+    // Only include your server code. 
+    // If your custom server is in `server.ts` or `server/`, put it here.
+    "include": ["server.ts", "server/**/*.ts"],
+  
+    // EXCLUDE Next.js "app/" folder and other front-end code
+    "exclude": [
+      "node_modules",
+      ".next",
+      "src/app",        // <--- Key line: skip the Next.js app directory
+      "src/components", // if you keep Next components in here
+      "**/*.test.ts"
+    ]
+  }
+  
