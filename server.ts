@@ -1,5 +1,4 @@
 import fastify from "fastify";
-import fastifyCors from "@fastify/cors";
 import fastifyFormBody from "@fastify/formbody";
 import fastifyWs from "@fastify/websocket";
 import next from "next";
