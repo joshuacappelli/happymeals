@@ -201,6 +201,11 @@ async function startServer() {
               console.log(`Received event: ${response.type}`, response);
             }
 
+            if (response.status === 'failed') {
+                console.log('openai realtime api failed:', JSON.stringify(response.status_details,null,2));
+                return;
+            }
+
             if (response.type === 'response.audio.delta' && response.delta) {
               const audioDelta = {
                 event: 'media',
